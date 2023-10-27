@@ -2,12 +2,11 @@
   "name": "desmanche_bot",
   "version": "1.0.0",
   "description": "",
-  "main": "src/app.js",
+  "main": "src/server.js",
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "node-dev src/app.js",
-    "register": "node-dev src/commands/index.js"
+    "dev": "node-dev src/server.js"
   },
   "repository": {
     "type": "git",
