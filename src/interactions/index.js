@@ -1,42 +1,34 @@
 import Bot from "../bot.js";
-
-Bot.on("messageCreate", (msg) => {
-  const PREFIX = process.env.BOT_PREFIX;
-  const channelId = msg.channel.id;
-  const content = msg.content;
-  const comand = utils.normalizeComand(content)[0];
-
-  if (msg.author.bot) {
-    return;
-  }
-
-  if (!content.startsWith(PREFIX)) {
-    return;
-  }
-  switch (comand) {
-    case "criar_item":
-      const res = stockControllers.createItem(msg);
-      Bot.createMessage(channelId, res);
-
-    default:
-      break;
-  }
-});
+import stockControllers from "../controllers/stockControllers.js";
 
 const interactions = async () =>
-  Bot.on("interactionCreate", (itr) => {
-    console.log(itr.data);
-    console.log(itr.member.user);
+  Bot.on("interactionCreate", async (itr) => {
     const comand = itr.data.name;
-    const channelId = itr.channel.id;
-
+    let res;
+    if (comand === "ajuda") return;
     switch (comand) {
       case "ajuda":
-        console.log(comand);
-        Bot.createMessage(channelId, "Você chamou ajuda!");
-        break;
+        return itr.createMessage("Você chamou ajuda!");
+      case "criar_item":
+        res = await stockControllers.createItem(itr);
+        return itr.createMessage(res);
+      case "adicionar":
+        res = await stockControllers.addQuantity(itr);
+        return itr.createMessage(res);
+      case "remover":
+        res = await stockControllers.removeQuantity(itr);
+        return itr.createMessage(res);
+      case "trocar_nome":
+        res = await stockControllers.changeName(itr);
+        return itr.createMessage(res);
+      case "deletar_item":
+        res = await stockControllers.desactive(itr);
+        return itr.createMessage(res);
+      case "reativar_item":
+        res = await stockControllers.reactive(itr);
+        return itr.createMessage(res);
       default:
-        break;
+        return itr.createMessage("Nenhuma ação encontrada para o comando.");
     }
   });
 

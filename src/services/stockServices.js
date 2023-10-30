@@ -1,32 +1,158 @@
 import StockItem from "../models/stockItem.js";
-import database from "../Database/index.js";
-import { json } from "express";
+import utils from "../utils/index.js";
 
-const createItem = (name, quantity = 0, creatorData) => {
-  const checkIfItemAlreadyExists = database.some((item) => item.name === name);
-  let message;
-  if (checkIfItemAlreadyExists) {
+const createItem = async (name, creatorUser, command, quantity = 0) => {
+  const item = await StockItem.create({
+    name,
+    quantity: Number(quantity),
+    creatorUser,
+    lastUpdatedUser: creatorUser,
+    registers: [
+      {
+        action: command,
+        quantity: quantity,
+        user: creatorUser,
+      },
+    ],
+  });
+
+  const message = `
+    Item criado com sucesso!
+    **Nome**: ${item.name}
+    **Quantidade**: ${item.quantity}
+    `;
+  return message;
+};
+
+const addQuantity = async (name, lastUpdatedUser, command, quantity) => {
+  const item = await utils.findOneByName(name);
+  const itemQuantity = Number(item.quantity);
+  const newQuantity = (itemQuantity + quantity).toFixed(2);
+  const register = {
+    action: command,
+    user: lastUpdatedUser,
+    quantity: quantity,
+  };
+
+  await StockItem.updateOne(
+    { name },
+    {
+      quantity: newQuantity,
+      lastUpdatedUser,
+      registers: [...item.registers, register],
+    }
+  );
+
+  const message = `Foi adicionado com sucesso **${quantity}** **${name}** ao estoque. Agora você tem **${newQuantity}** **${name}**.`;
+
+  return message;
+};
+
+const removeQuantity = async (name, lastUpdatedUser, command, quantity) => {
+  const item = await utils.findOneByName(name);
+  const itemQuantity = Number(item.quantity);
+
+  if (quantity > item.quantity) {
     throw new Error(
-      `O item **${name}** já está cadastrado, escolha outro nome ou altere a quantidade do item com o comando: \`\`\`!estoque adicionar_quantidade <nome_do_item> <quantidade>\`\`\``
+      `Não foi possível remover. Você tem **${item.quantity} ${name}** em estoque.`
     );
   }
-  const item = new StockItem(name, quantity, creatorData);
-  database.push(item);
-  const res = {
-    nome: item.name,
-    quantidade: item.quantity,
-    Criador: item.creatorUser,
-    DataDaCriacao: item.creationDate,
-    ultimaAtualizacaoo: item.updateDate,
-    ultimoUsuarioAtualizador: item.lastUpdatedUser,
+
+  const newQuantity = (itemQuantity - quantity).toFixed(2);
+
+  const register = {
+    action: command,
+    user: lastUpdatedUser,
+    quantity: quantity,
   };
-  const resJSON = JSON.stringify(res, null, 2);
-  message = `O item **${name}** foi cadastrado com sucesso! \`\`\`javascript\n${resJSON}\`\`\``;
+
+  await StockItem.updateOne(
+    { name },
+    {
+      quantity: newQuantity,
+      lastUpdatedUser,
+      registers: [...item.registers, register],
+    }
+  );
+
+  const message = `Foi removido com sucesso **${quantity}** **${name}** do estoque. Agora você tem **${newQuantity}** **${name}**.`;
+
+  return message;
+};
+
+const changeName = async (lastName, newName, user, action) => {
+  const item = await utils.findOneByName(lastName);
+
+  const register = {
+    action,
+    user,
+  };
+
+  await StockItem.updateOne(
+    { name: lastName },
+    {
+      name: newName,
+      lastUpdatedUser: user,
+      registers: [...item.registers, register],
+    }
+  );
+
+  const message = `Nome alterado com sucesso!`;
+
+  return message;
+};
+
+const desactive = async (name, user, action) => {
+  const item = await utils.findOneByName(name);
+
+  const register = {
+    action,
+    user,
+  };
+
+  await StockItem.updateOne(
+    { name },
+    {
+      isActive: false,
+      lastUpdatedUser: user,
+      registers: [...item.registers, register],
+    }
+  );
+
+  const message = `Item ${name} desativado com sucesso!`;
+
+  return message;
+};
+
+const reactive = async (name, user, action) => {
+  const item = await utils.findOneByName(name);
+
+  const register = {
+    action,
+    user,
+  };
+
+  await StockItem.updateOne(
+    { name },
+    {
+      isActive: true,
+      lastUpdatedUser: user,
+      registers: [...item.registers, register],
+    }
+  );
+
+  const message = `Item ${name} reativado com sucesso!`;
+
   return message;
 };
 
 const stockServices = {
   createItem,
+  addQuantity,
+  removeQuantity,
+  changeName,
+  desactive,
+  reactive,
 };
 
 export default stockServices;

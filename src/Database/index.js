@@ -1,3 +1,6 @@
-const database = [];
+import "dotenv/config";
+import mongoose from "mongoose";
 
-export default database;
+const databaseConnect = async () => await mongoose.connect(process.env.DB_URL);
+
+export default databaseConnect;

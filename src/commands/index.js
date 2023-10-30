@@ -21,8 +21,8 @@ export const createCommand = {
   ],
 };
 
-export const editCommand = {
-  name: "editar_item",
+export const editName = {
+  name: "trocar_nome",
   description: "Edita o nome de um item no estoque.",
   options: [
     {
