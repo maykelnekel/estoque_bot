@@ -27,6 +27,12 @@ const interactions = async () =>
       case "reativar_item":
         res = await stockControllers.reactive(itr);
         return itr.createMessage(res);
+      case "consultar_item":
+        res = await stockControllers.getSpecificItem(itr);
+        return itr.createMessage(res);
+      case "consultar_estoque":
+        res = await stockControllers.getAllItems();
+        return itr.createMessage(res);
       default:
         return itr.createMessage("Nenhuma ação encontrada para o comando.");
     }

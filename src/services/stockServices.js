@@ -146,6 +146,55 @@ const reactive = async (name, user, action) => {
   return message;
 };
 
+const getSpecificItem = async (name, details) => {
+  const item = await utils.findOneByName(name);
+  let message;
+
+  if (details === "true") {
+    let registers = "";
+
+    for (const register of item.registers) {
+      if (register.quantity) {
+        registers += `\nAção: ${register.action}
+    Usuário: ${register.user}
+    Data: ${utils.normalizeDate(register.createdAt)}
+    Quantity: ${register.quantity ? register.quantity : ""}\n`;
+      } else {
+        registers += `\nAção: ${register.action}
+      Usuário: ${register.user}
+      Data: ${utils.normalizeDate(register.createdAt)}\n`;
+      }
+    }
+    message = `**Item**: ${item.name} 
+  \n**Quantidade atual:** ${item.quantity}
+  \n**Última interação:** ${utils.normalizeDate(item.updatedAt)}
+  \n**Usuário da última interação:** ${item.lastUpdatedUser}
+  \n**Data da criação:** ${utils.normalizeDate(item.createdAt)}
+  \n**Usuário da crição:** ${item.creatorUser}
+  \n**Registros de ações:**
+  ${registers}`;
+  } else {
+    message = `Item: ${item.name} 
+    Quantidade atual: ${item.quantity}`;
+  }
+
+  return message;
+};
+
+const getAllItems = async () => {
+  const items = await StockItem.find();
+
+  let message = "";
+
+  for (const item of items) {
+    message += `---------------//---------------
+    Item: **\`${item.name}\`**
+    Quantidade: **\`${item.quantity}\`**\n`;
+  }
+
+  return message;
+};
+
 const stockServices = {
   createItem,
   addQuantity,
@@ -153,6 +202,8 @@ const stockServices = {
   changeName,
   desactive,
   reactive,
+  getSpecificItem,
+  getAllItems,
 };
 
 export default stockServices;

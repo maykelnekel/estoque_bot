@@ -168,6 +168,37 @@ const reactive = async (itr) => {
   }
 };
 
+const getSpecificItem = async (itr) => {
+  try {
+    const data = itr.data;
+    const dataValues = {};
+
+    for (const opt of data.options) {
+      dataValues[opt.name] = opt.value;
+    }
+    const name = dataValues.nome_do_item;
+    const details = dataValues.detalhes;
+
+    await middlewares.verifyItemExists(name);
+
+    const res = await stockServices.getSpecificItem(name, details);
+    return res;
+  } catch (error) {
+    console.log(error.message);
+    return error.message;
+  }
+};
+
+const getAllItems = async () => {
+  try {
+    const res = await stockServices.getAllItems();
+    return res;
+  } catch (error) {
+    console.log(error.message);
+    return error.message;
+  }
+};
+
 const stockControllers = {
   createItem,
   addQuantity,
@@ -175,6 +206,8 @@ const stockControllers = {
   changeName,
   desactive,
   reactive,
+  getSpecificItem,
+  getAllItems,
 };
 
 export default stockControllers;

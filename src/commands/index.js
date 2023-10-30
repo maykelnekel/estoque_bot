@@ -111,6 +111,40 @@ export const reactiveItemCommand = {
   ],
 };
 
+export const selectSpecificItemCommand = {
+  name: "consultar_item",
+  description:
+    "Consulta as informações básicas de um item que esteja ativo no estoque.",
+  options: [
+    {
+      name: "nome_do_item",
+      description: "Nome do item da busca.",
+      required: true,
+      type: 3,
+    },
+    {
+      name: "detalhes",
+      description: "Traz a lista de informações mais detalhada do item.",
+      required: true,
+      type: 3,
+      choices: [
+        { name: "sim", value: "true" },
+        { name: "não", value: "false" },
+      ],
+    },
+  ],
+};
+
+export const selectAllItemsCommand = {
+  name: "consultar_estoque",
+  description:
+    "Consulta as informações básicas de todos os itens ativos no estoque.",
+};
+
+export const relatoryCommand = {
+  name: "relatorio",
+  description: "Baixa um relatório completo no formato CSV.",
+};
 export const ajuda = {
   name: "ajuda",
   description: "Descreve a funcionalidade de cada comando do Bot.",
