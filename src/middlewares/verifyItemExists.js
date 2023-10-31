@@ -1,7 +1,7 @@
-import StockItem from "../models/stockItem.js";
+import utils from "../utils/index.js";
 
-const verifyItemExists = async (name, reactive = false) => {
-  const item = await StockItem.findOne({ name });
+const verifyItemExists = async (server, name, reactive = false) => {
+  const item = await utils.findOneByServerAndItemName(server, name);
   if (!item) {
     throw new Error(`O item **${name}** não foi encontrado no estoque.`);
   }

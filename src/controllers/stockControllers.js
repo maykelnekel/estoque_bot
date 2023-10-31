@@ -6,28 +6,33 @@ import utils from "../utils/index.js";
 const createItem = async (itr) => {
   try {
     const data = itr.data;
+
     const dataValues = {};
+    const server = itr.MODEL_NAME;
 
     for (const opt of data.options) {
       dataValues[opt.name] = opt.value;
     }
     const itemName = dataValues.nome_do_item;
-
-    await middlewares.verifyItemAlreadyExists(itemName);
+    const quantity = Number(
+      utils.normalizeNumber(dataValues.quantidade_inicial)
+    );
+    await middlewares.verifyItemAlreadyExists(server, itemName);
 
     const command = itr.data.name;
 
     const user = itr.member.user.username;
 
     const res = await stockServices.createItem(
+      server,
       itemName,
       user,
       command,
-      dataValues.quantidade
+      quantity
     );
     return res;
   } catch (error) {
-    console.log(error.message);
+    console.error(error.message);
     return error.message;
   }
 };
@@ -35,6 +40,8 @@ const createItem = async (itr) => {
 const addQuantity = async (itr) => {
   try {
     const data = itr.data;
+    const server = itr.MODEL_NAME;
+
     const dataValues = {};
 
     for (const opt of data.options) {
@@ -44,13 +51,13 @@ const addQuantity = async (itr) => {
 
     const quantity = Number(utils.normalizeNumber(dataValues.quantidade));
 
-    await middlewares.verifyItemExists(itemName);
+    await middlewares.verifyItemExists(server, itemName);
 
     const command = itr.data.name;
     const user = itr.member.user.username;
-    console.log(typeof dataValues.quantidade);
 
     const res = await stockServices.addQuantity(
+      server,
       itemName,
       user,
       command,
@@ -58,7 +65,7 @@ const addQuantity = async (itr) => {
     );
     return res;
   } catch (error) {
-    console.log(error.message);
+    console.error(error.message);
     return error.message;
   }
 };
@@ -66,6 +73,7 @@ const addQuantity = async (itr) => {
 const removeQuantity = async (itr) => {
   try {
     const data = itr.data;
+    const server = itr.MODEL_NAME;
     const dataValues = {};
 
     for (const opt of data.options) {
@@ -74,12 +82,13 @@ const removeQuantity = async (itr) => {
     const itemName = dataValues.nome_do_item;
     const quantity = Number(dataValues.quantidade);
 
-    await middlewares.verifyItemExists(itemName);
+    await middlewares.verifyItemExists(server, itemName);
 
     const command = itr.data.name;
     const user = itr.member.user.username;
 
     const res = await stockServices.removeQuantity(
+      server,
       itemName,
       user,
       command,
@@ -87,7 +96,7 @@ const removeQuantity = async (itr) => {
     );
     return res;
   } catch (error) {
-    console.log(error.message);
+    console.error(error.message);
     return error.message;
   }
 };
@@ -95,6 +104,7 @@ const removeQuantity = async (itr) => {
 const changeName = async (itr) => {
   try {
     const data = itr.data;
+    const server = itr.MODEL_NAME;
     const dataValues = {};
 
     for (const opt of data.options) {
@@ -103,13 +113,14 @@ const changeName = async (itr) => {
     const lastName = dataValues.item_antigo;
     const newName = dataValues.novo_nome;
 
-    await middlewares.verifyItemExists(lastName);
-    await middlewares.verifyItemAlreadyExists(newName);
+    await middlewares.verifyItemExists(server, lastName);
+    await middlewares.verifyItemAlreadyExists(server, newName);
 
     const command = itr.data.name;
     const user = itr.member.user.username;
 
     const res = await stockServices.changeName(
+      server,
       lastName,
       newName,
       user,
@@ -117,7 +128,7 @@ const changeName = async (itr) => {
     );
     return res;
   } catch (error) {
-    console.log(error.message);
+    console.error(error.message);
     return error.message;
   }
 };
@@ -125,6 +136,8 @@ const changeName = async (itr) => {
 const desactive = async (itr) => {
   try {
     const data = itr.data;
+    const server = itr.MODEL_NAME;
+
     const dataValues = {};
 
     for (const opt of data.options) {
@@ -132,22 +145,23 @@ const desactive = async (itr) => {
     }
     const name = dataValues.nome_do_item;
 
-    await middlewares.verifyItemExists(name);
+    await middlewares.verifyItemExists(server, name);
 
     const command = itr.data.name;
     const user = itr.member.user.username;
 
-    const res = await stockServices.desactive(name, user, command);
+    const res = await stockServices.desactive(server, name, user, command);
     return res;
   } catch (error) {
-    console.log(error.message);
+    console.error(error.message);
     return error.message;
   }
 };
-
-const reactive = async (itr) => {
+const deleteOne = async (itr) => {
   try {
     const data = itr.data;
+    const server = itr.MODEL_NAME;
+
     const dataValues = {};
 
     for (const opt of data.options) {
@@ -155,15 +169,36 @@ const reactive = async (itr) => {
     }
     const name = dataValues.nome_do_item;
 
-    await middlewares.verifyItemExists(name, true);
+    await middlewares.verifyItemExists(server, name);
+
+    const res = await stockServices.deleteOne(server, name);
+    return res;
+  } catch (error) {
+    console.error(error.message);
+    return error.message;
+  }
+};
+const reactive = async (itr) => {
+  try {
+    const data = itr.data;
+    const server = itr.MODEL_NAME;
+
+    const dataValues = {};
+
+    for (const opt of data.options) {
+      dataValues[opt.name] = opt.value;
+    }
+    const name = dataValues.nome_do_item;
+
+    await middlewares.verifyItemExists(server, name, true);
 
     const command = itr.data.name;
     const user = itr.member.user.username;
 
-    const res = await stockServices.reactive(name, user, command);
+    const res = await stockServices.reactive(server, name, user, command);
     return res;
   } catch (error) {
-    console.log(error.message);
+    console.error(error.message);
     return error.message;
   }
 };
@@ -171,6 +206,8 @@ const reactive = async (itr) => {
 const getSpecificItem = async (itr) => {
   try {
     const data = itr.data;
+    const server = itr.MODEL_NAME;
+
     const dataValues = {};
 
     for (const opt of data.options) {
@@ -179,22 +216,36 @@ const getSpecificItem = async (itr) => {
     const name = dataValues.nome_do_item;
     const details = dataValues.detalhes;
 
-    await middlewares.verifyItemExists(name);
+    await middlewares.verifyItemExists(server, name);
 
-    const res = await stockServices.getSpecificItem(name, details);
+    const res = await stockServices.getSpecificItem(server, name, details);
     return res;
   } catch (error) {
-    console.log(error.message);
+    console.error(error.message);
     return error.message;
   }
 };
 
-const getAllItems = async () => {
+const getAllItems = async (itr) => {
   try {
-    const res = await stockServices.getAllItems();
+    const server = itr.MODEL_NAME;
+
+    const res = await stockServices.getAllItems(server);
     return res;
   } catch (error) {
-    console.log(error.message);
+    console.error(error.message);
+    return error.message;
+  }
+};
+
+const relatory = async (itr) => {
+  try {
+    const server = itr.MODEL_NAME;
+
+    const res = await stockServices.relatory(server);
+    return res;
+  } catch (error) {
+    console.error(error.message);
     return error.message;
   }
 };
@@ -208,6 +259,8 @@ const stockControllers = {
   reactive,
   getSpecificItem,
   getAllItems,
+  deleteOne,
+  relatory,
 };
 
 export default stockControllers;

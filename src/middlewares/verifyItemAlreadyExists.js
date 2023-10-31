@@ -1,7 +1,7 @@
-import StockItem from "../models/stockItem.js";
+import utils from "../utils/index.js";
 
-const verifyItemAlreadyExists = async (name) => {
-  const item = await StockItem.findOne({ name });
+const verifyItemAlreadyExists = async (server, name) => {
+  const item = await utils.findOneByServerAndItemName(server, name);
   if (item) {
     if (item.isActive === false) {
       throw new Error(

@@ -8,7 +8,7 @@ const registerSchema = new Schema({
   createdAt: { type: Date, default: Date.now },
 });
 
-const stockItemSchema = new Schema(
+const itemSchema = new Schema(
   {
     name: { type: String, required: true },
     quantity: { type: Number, min: 0, required: true },
@@ -22,6 +22,11 @@ const stockItemSchema = new Schema(
   { timestamps: true }
 );
 
-const StockItem = model("StockItem", stockItemSchema);
+const stockSchema = new Schema({
+  server: String,
+  data: [itemSchema],
+});
+
+const StockItem = model("StockItem", stockSchema);
 
 export default StockItem;

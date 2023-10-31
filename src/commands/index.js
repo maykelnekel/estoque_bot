@@ -3,7 +3,7 @@ import "dotenv/config";
 export const createCommand = {
   name: "criar_item",
   description:
-    "Cria um novo item informando seu nome e opicionalmente podendo adicionar uma quantidade inicial.",
+    "Cria um novo item, informando `nome_do_item`, podendo adicionar uma `quantidade_inicial`",
   options: [
     {
       name: "nome_do_item",
@@ -12,7 +12,7 @@ export const createCommand = {
       type: 3,
     },
     {
-      name: "quantidade",
+      name: "quantidade_inicial",
       description:
         "Quantidade inicial do novo item. Caso não seja informado será zero.",
       required: false,
@@ -42,7 +42,7 @@ export const editName = {
 
 export const addCommand = {
   name: "adicionar",
-  description: "Adiciona uma determinada quantidade à um item no estoque.",
+  description: "Adiciona uma determinada quantidade ao um item.",
   options: [
     {
       name: "quantidade",
@@ -91,30 +91,9 @@ export const deleteCommand = {
   ],
 };
 
-export const reactiveItemCommand = {
-  name: "reativar_item",
-  description: "Reativa um item que foi deletado anteriormente.",
-  options: [
-    {
-      name: "nome_do_item",
-      description: "Nome do item que será reativado.",
-      required: true,
-      type: 3,
-    },
-    {
-      name: "quantidade",
-      description:
-        "Quantidade a ser adicionada. Caso não seja informado será zero.",
-      required: false,
-      type: 3,
-    },
-  ],
-};
-
 export const selectSpecificItemCommand = {
   name: "consultar_item",
-  description:
-    "Consulta as informações básicas de um item que esteja ativo no estoque.",
+  description: "Consulta as informações de um item no estoque.",
   options: [
     {
       name: "nome_do_item",
@@ -143,8 +122,9 @@ export const selectAllItemsCommand = {
 
 export const relatoryCommand = {
   name: "relatorio",
-  description: "Baixa um relatório completo no formato CSV.",
+  description: "Baixa um relatório completo no formato TXT.",
 };
+
 export const ajuda = {
   name: "ajuda",
   description: "Descreve a funcionalidade de cada comando do Bot.",

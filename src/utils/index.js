@@ -10,8 +10,18 @@ const normalizeComand = (content) => {
 
 const jsonify = (obj) => JSON.stringify(obj, null, 2);
 
-const findOneByName = async (name) => {
-  return await StockItem.findOne({ name });
+const findOneByServerAndItemName = async (server, name) => {
+  const res = await StockItem.findOne(
+    { server, "data.name": name },
+    { "data.$": 1 }
+  );
+
+  return res;
+};
+
+const findOneByServer = async (server) => {
+  const res = await StockItem.findOne({ server });
+  return res;
 };
 
 const normalizeNumber = (number) => number.replace(/,/g, ".");
@@ -31,12 +41,25 @@ const normalizeDate = (date) => {
   return formattedDate;
 };
 
+const sender = (itr, message) => {
+  if (message.length > 2000) {
+    return itr.createMessage(
+      `As informações são grandes demais para enviar como mensagem, você receberá um arquivo.`,
+      { name: "estoque.txt", file: message }
+    );
+  } else {
+    return itr.createMessage(message);
+  }
+};
+
 const utils = {
   normalizeComand,
   jsonify,
-  findOneByName,
   normalizeNumber,
   normalizeDate,
+  sender,
+  findOneByServer,
+  findOneByServerAndItemName,
 };
 
 export default utils;

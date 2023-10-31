@@ -1,14 +1,38 @@
 import Bot from "../bot.js";
 import stockControllers from "../controllers/stockControllers.js";
+import StockItem from "../models/stockItem.js";
+import utils from "../utils/index.js";
+import views from "../views/index.js";
 
-const interactions = async () =>
+import "dotenv/config.js";
+
+const interactions = async () => {
+  Bot.on("channelCreate", async (channel) => {
+    try {
+      const BOT_NAME = process.env.BOT_NAME;
+      const channelId = channel.id;
+      process.env["MODEL_NAME"] = channelId;
+      const map = channel.guild.roles.map((role) => role.name);
+      if (map.includes(BOT_NAME)) {
+        await StockItem.create({ server: channelId, data: [] });
+        return channel.createMessage(views.newChannelMessage);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  });
+
   Bot.on("interactionCreate", async (itr) => {
+    const channelId = itr.channel.id;
+    process.env["MODEL_NAME"] = channelId;
+    itr["MODEL_NAME"] = channelId;
+
     const comand = itr.data.name;
+
     let res;
-    if (comand === "ajuda") return;
     switch (comand) {
       case "ajuda":
-        return itr.createMessage("Você chamou ajuda!");
+        return itr.createMessage(views.helpMessage);
       case "criar_item":
         res = await stockControllers.createItem(itr);
         return itr.createMessage(res);
@@ -22,20 +46,21 @@ const interactions = async () =>
         res = await stockControllers.changeName(itr);
         return itr.createMessage(res);
       case "deletar_item":
-        res = await stockControllers.desactive(itr);
-        return itr.createMessage(res);
-      case "reativar_item":
-        res = await stockControllers.reactive(itr);
+        res = await stockControllers.deleteOne(itr);
         return itr.createMessage(res);
       case "consultar_item":
         res = await stockControllers.getSpecificItem(itr);
-        return itr.createMessage(res);
+        return utils.sender(itr, res);
       case "consultar_estoque":
-        res = await stockControllers.getAllItems();
-        return itr.createMessage(res);
+        res = await stockControllers.getAllItems(itr);
+        return utils.sender(itr, res);
+      case "relatorio":
+        res = await stockControllers.relatory(itr);
+        return utils.sender(itr, res);
       default:
         return itr.createMessage("Nenhuma ação encontrada para o comando.");
     }
   });
+};
 
 export default interactions;
