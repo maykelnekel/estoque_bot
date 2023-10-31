@@ -14,9 +14,10 @@ const createItem = async (itr) => {
       dataValues[opt.name] = opt.value;
     }
     const itemName = dataValues.nome_do_item;
-    const quantity = Number(
-      utils.normalizeNumber(dataValues.quantidade_inicial)
-    );
+    let quantity;
+    if ("quantidade_inicial" in dataValues) {
+      quantity = Number(utils.normalizeNumber(dataValues.quantidade_inicial));
+    }
     await middlewares.verifyItemAlreadyExists(server, itemName);
 
     const command = itr.data.name;
