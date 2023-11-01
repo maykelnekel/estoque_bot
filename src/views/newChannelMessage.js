@@ -20,8 +20,6 @@ Aqui está um resumo dos comandos disponíveis:
 
 **\`/deletar_item\`** - Remove as quantidades um item do estoque e o exlui.
 
-**\`/reativar_item\`** - Reativa um item que foi deletado anteriormente.
-
 **\`/consultar_item\`** - Consulta as informações de um item no estoque.
 
 **\`/consultar_estoque\`** - Consulta as informações básicas de todos os itens no estoque.

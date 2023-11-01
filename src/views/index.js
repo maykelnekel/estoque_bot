@@ -1,8 +1,8 @@
-import helpMessage from "./helpMessage.js";
+import helpMessages from "./helpMessages.js";
 import newChannelMessage from "./newChannelMessage.js";
 
 const views = {
-  helpMessage,
+  helpMessages,
   newChannelMessage,
 };
 

@@ -241,7 +241,6 @@ ${SEPARATOR}`;
 
 const relatory = async (server) => {
   const items = await utils.findOneByServer(server);
-  console.log(items.data);
   let message = `${SEPARATOR}`;
 
   for (const item of items.data) {
