@@ -125,7 +125,25 @@ export const relatoryCommand = {
   description: "Baixa um relatório completo no formato TXT.",
 };
 
-export const ajuda = {
+export const help = {
   name: "ajuda",
   description: "Descreve a funcionalidade de cada comando do Bot.",
+  options: [
+    {
+      name: "comando",
+      description: "Traz informações mais detalhada sobre comando.",
+      required: true,
+      type: 3,
+      choices: [
+        { name: "criar_item", value: "criar_item" },
+        { name: "adicionar", value: "adicionar" },
+        { name: "remover", value: "remover" },
+        { name: "trocar_nome", value: "trocar_nome" },
+        { name: "deletar_item", value: "deletar_item" },
+        { name: "consultar_item", value: "consultar_item" },
+        { name: "consultar_estoque", value: "consultar_estoque" },
+        { name: "relatorio", value: "relatorio" },
+      ],
+    },
+  ],
 };

@@ -1,4 +1,5 @@
 import Bot from "../bot.js";
+import helpControllers from "../controllers/helpControllers.js";
 import stockControllers from "../controllers/stockControllers.js";
 import StockItem from "../models/stockItem.js";
 import utils from "../utils/index.js";
@@ -32,7 +33,8 @@ const interactions = async () => {
     let res;
     switch (comand) {
       case "ajuda":
-        return itr.createMessage(views.helpMessage);
+        res = helpControllers.getHelp(itr);
+        return itr.createMessage(res);
       case "criar_item":
         res = await stockControllers.createItem(itr);
         return itr.createMessage(res);
